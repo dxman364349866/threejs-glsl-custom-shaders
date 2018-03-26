@@ -36,11 +36,28 @@ void main()
 <script id="holeyShader" type="x-shader/x-fragment">
 varying vec3 vcsNormal;
 varying vec3 vcsPosition;
+varying vec3 ocsPosition;
+varying vec2 vUv;
 uniform vec3 lightPosition;
 uniform vec3 myColor;
 
 void main( void ) {
   //gl_FragColor = vec4(0.6,0.6,1.0,1.0);
+  float x = ocsPosition.x;
+  float y = ocsPosition.y;
+  float z = ocsPosition.z;
+  float radius = 0.15;
+  float k = 0.5 / radius;
+  float cx = floor((x * k) + 0.5) / k;
+  float cy = floor((y * k) + 0.5) / k;
+  float cz = floor((z * k) + 0.5) / k;
+
+  vec3 center = vec3(cx, cy, cz);
+  float distance = distance(ocsPosition, center);
+  if (distance <= radius) {
+    discard;
+  }
+
   vec3 L = normalize(lightPosition - vcsPosition);
   vec3 N = normalize(vcsNormal);
   float i = dot(N, L);
@@ -55,18 +72,6 @@ uniform vec3 lightPosition;
 uniform vec3 myColor;
 
 void main( void ) {
-  /*
-  vec3 Ia = vec3(0.2, 0.2, 0.2);
-  vec3 IL = vec3(1,1,1);
-  vec3 ka = vec3(0.9, 0.9, 0.3);
-  vec3 kd = vec3(0.9, 0.9, 0.3);
-  vec3 N = vcsNormal;
-  vec3 L = vec3(0, 1, 0);
-  vec3 ambientColor = Ia * ka;
-  vec3 diffuseColor = IL * kd + max(0, dot(N,L));
-  gl_FragColor = vec4(ambientColor + diffuseColor, 1.0);
-  */
-  //gl_FragColor = vec4(1.0,0.6,0.6,1.0);
   vec3 L = normalize(lightPosition - vcsPosition);
   vec3 N = normalize(vcsNormal);
   float i = floor(dot(N, L) * 4.0) / 4.0;
@@ -84,17 +89,46 @@ varying vec3 ocsPosition;
 varying vec3 vcsPosition;
 
 void main( void ) {
-
-  gl_FragColor = vec4(0.4,0.8,0.4,1.0);
+  vec3 I = normalize(vcsPosition);
+  vec3 N = normalize(vcsNormal);
+  vec3 R = reflect(I, N);
+  vec3 RWorld = vec3(matrixWorld * vec4(R, 0.0));
+  if (RWorld.y > 0.0 && RWorld.y > RWorld.x && RWorld.y > RWorld.z) {
+    vec3 IWorld = vec3(matrixWorld * vec4(I, 0.0));
+    float u = 1.0 - ((RWorld.x / RWorld.y) + 1.0) / 2.0;
+    float v = 1.0 - ((RWorld.z / RWorld.y) + 1.0) / 2.0;
+    gl_FragColor = texture2D(myTexture, vec2(u, v));
+  } else {
+    vec3 surfNormal = vcsNormal;
+    vec3 N = normalize(surfNormal);
+    vec3 L = normalize(lightPosition - vcsPosition);
+    float i = dot(N, L);
+    gl_FragColor = vec4(myColor * i ,1.0);
+    // gl_FragColor = vec4(0.4,0.8,0.4,1.0);
+  }
 }
 </script>
 
 
 <script id="myBumpShader" type="x-shader/x-fragment">
+varying vec3 vcsPosition;
+varying vec3 ocsPosition;
+uniform vec3 lightPosition;
+uniform vec3 myColor;
+
 void main( void ) {
   vec3 surfNormal = vec3(0.0,0.0,1.0);
   vec3 N = normalize(surfNormal);
-  gl_FragColor = vec4(0.7,0.7,0.7,1.0);
+  vec3 L = normalize(lightPosition - vcsPosition);
+
+  float k = 3.0;
+  float param1 = ((ocsPosition.y + ocsPosition.z) * k);
+  float param2 = ((ocsPosition.x + ocsPosition.z) * k);
+  float param3 = ((ocsPosition.x + ocsPosition.y) * k);
+  vec3 bumpedN = normalize(vec3(cos(param1), cos(param2), cos(param3)));
+  float i = dot(bumpedN, L);
+  gl_FragColor = vec4(myColor * i ,1.0);
+
 }
 </script>
 
