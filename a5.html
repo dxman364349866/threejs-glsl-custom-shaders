@@ -91,10 +91,9 @@ varying vec3 vcsPosition;
 void main( void ) {
   vec3 I = normalize(vcsPosition);
   vec3 N = normalize(vcsNormal);
-  vec3 R = reflect(I, N);
-  vec3 RWorld = vec3(matrixWorld * vec4(R, 0.0));
-  if (RWorld.y > 0.0 && RWorld.y > RWorld.x && RWorld.y > RWorld.z) {
-    vec3 IWorld = vec3(matrixWorld * vec4(I, 0.0));
+  vec3 R = normalize(reflect(I, N));
+  vec3 RWorld = normalize(vec3(matrixWorld * vec4(R, 0.0)));
+  if (RWorld.y > 0.0 && RWorld.y > abs(RWorld.x) && RWorld.y > abs(RWorld.z)) {
     float u = 1.0 - ((RWorld.x / RWorld.y) + 1.0) / 2.0;
     float v = 1.0 - ((RWorld.z / RWorld.y) + 1.0) / 2.0;
     gl_FragColor = texture2D(myTexture, vec2(u, v));
