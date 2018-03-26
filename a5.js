@@ -9,6 +9,9 @@ console.log('hello world');
 myvector = new THREE.Vector3(0,1,2);
 console.log('myvector =',myvector);
 
+// GLOBAL TIME
+var time = 0;
+
 // SETUP RENDERER & SCENE
 var canvas = document.getElementById('canvas');
 var scene = new THREE.Scene();
@@ -111,6 +114,20 @@ var toonMaterial = new THREE.ShaderMaterial( {
 	vertexShader: document.getElementById( 'myVertShader' ).textContent,
 	fragmentShader: document.getElementById( 'toonShader' ).textContent
 } );
+
+////////////////////// DONUGHT SHADER /////////////////////////////
+
+var donughtMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+       lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
+       myColor: { value: new THREE.Vector4(0.82,0.52,0.11,1.0) },
+       time: {value: 0.0}
+    },
+  vertexShader: document.getElementById( 'myVertShader' ).textContent,
+  fragmentShader: document.getElementById( 'donughtShader' ).textContent
+}
+
+);
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////  OBJECTS /////////////////////////////////////////////////
@@ -222,6 +239,17 @@ torus.position.set(3, 0, 0.3);   // translation
 torus.rotation.set(0,0,0);     // rotation about x,y,z axes
 scene.add( torus );
 
+
+/////////////////////////////////////////////////////////////////////////
+// volumetric texture on donught
+/////////////////////////////////////////////////////////////////////////
+
+// parameters:   radius of torus, diameter of tube, segments around radius, segments around torus
+torusGeometry = new THREE.TorusGeometry( 1.2, 0.4, 10, 20 );
+torus = new THREE.Mesh( torusGeometry, donughtMaterial);
+torus.position.set(-3, 0, 3.0);   // translation
+torus.rotation.set(Math.PI/2,0,0);     // rotation about x,y,z axes
+scene.add( torus );
 /////////////////////////////////////
 // MIRROR:  square patch on the ground
 /////////////////////////////////////
@@ -321,6 +349,8 @@ function checkKeyboard() {
   myBumpMaterial.uniforms.lightPosition.value.needsUpdate = true;
   toonMaterial.uniforms.lightPosition.value = vcsLight;
   toonMaterial.uniforms.lightPosition.value.needsUpdate = true;
+  donughtMaterial.uniforms.lightPosition.value = vcsLight;
+  donughtMaterial.uniforms.lightPosition.value.needsUpdate = true;
   holeyMaterial.uniforms.lightPosition.value = vcsLight;
   holeyMaterial.uniforms.lightPosition.value.needsUpdate = true;
   envmapMaterial.uniforms.lightPosition.value = vcsLight;
@@ -334,8 +364,11 @@ function checkKeyboard() {
 function update() {
   checkKeyboard();
   requestAnimationFrame(update);
+  time += 1;
   envmapMaterial.uniforms.matrixWorld.value = camera.matrixWorld;
   envmapMaterial.uniforms.matrixWorld.update = true;
+  donughtMaterial.uniforms.time.value = time;
+  donughtMaterial.uniforms.time.update = true;
   renderer.render(scene, camera);
 }
 
