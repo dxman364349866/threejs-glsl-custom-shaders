@@ -120,7 +120,7 @@ var toonMaterial = new THREE.ShaderMaterial( {
 var donughtMaterial = new THREE.ShaderMaterial({
     uniforms: {
        lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
-       myColor: { value: new THREE.Vector4(34/255, 47/255, 62/255, 1.0) },
+       myColor: { value: new THREE.Vector4(0.917, 0.125, 0.153, 1.0) },
        time: {value: 0.0}
     },
   vertexShader: document.getElementById( 'myVertShader' ).textContent,
