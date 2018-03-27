@@ -120,7 +120,7 @@ var toonMaterial = new THREE.ShaderMaterial( {
 var donughtMaterial = new THREE.ShaderMaterial({
     uniforms: {
        lightPosition: {value: new THREE.Vector3(0.0,0.0,-1.0) },
-       myColor: { value: new THREE.Vector4(0.82,0.52,0.11,1.0) },
+       myColor: { value: new THREE.Vector4(34/255, 47/255, 62/255, 1.0) },
        time: {value: 0.0}
     },
   vertexShader: document.getElementById( 'myVertShader' ).textContent,
@@ -245,10 +245,10 @@ scene.add( torus );
 /////////////////////////////////////////////////////////////////////////
 
 // parameters:   radius of torus, diameter of tube, segments around radius, segments around torus
-torusGeometry = new THREE.TorusGeometry( 1.2, 0.4, 10, 20 );
+torusGeometry = new THREE.TorusGeometry( 1.2, 0.4, 20, 40 );
 torus = new THREE.Mesh( torusGeometry, donughtMaterial);
 torus.position.set(-3, 0, 3.0);   // translation
-torus.rotation.set(Math.PI/2,0,0);     // rotation about x,y,z axes
+torus.rotation.set(Math.PI/2,0, -Math.PI/2);     // rotation about x,y,z axes
 scene.add( torus );
 /////////////////////////////////////
 // MIRROR:  square patch on the ground
