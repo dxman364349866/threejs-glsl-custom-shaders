@@ -183,6 +183,7 @@ negyMaterial = new THREE.MeshBasicMaterial( {map: negyTexture, side:THREE.Double
 negyWall = new THREE.Mesh(wallGeometry, negyMaterial);   // define the wall object:  geom + shader
 negyWall.position.y = -size;
 negyWall.rotation.x = Math.PI / 2;
+negyWall.rotation.y = Math.PI;
 scene.add(negyWall);
 
 negzTexture = textureLoader.load( "images/negz.jpg" );   //  load texture map
